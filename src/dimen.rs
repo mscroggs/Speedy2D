@@ -197,7 +197,6 @@ where
     T: Copy
 {
     #[inline]
-    #[must_use]
     fn from(value: (T, T)) -> Self
     {
         Vector2::new(value.0, value.1)
@@ -209,7 +208,6 @@ where
     T: Copy
 {
     #[inline]
-    #[must_use]
     fn from(value: &(T, T)) -> Self
     {
         Vector2::new(value.0, value.1)
@@ -221,7 +219,6 @@ where
     T: Copy
 {
     #[inline]
-    #[must_use]
     fn from(value: &Self) -> Self
     {
         *value
@@ -233,7 +230,6 @@ where
     T: Copy
 {
     #[inline]
-    #[must_use]
     fn from(value: &mut Self) -> Self
     {
         *value
@@ -245,7 +241,6 @@ impl<T: Copy + std::ops::Add<Output = T>, R: Into<Self>> std::ops::Add<R> for Ve
     type Output = Vector2<T>;
 
     #[inline]
-    #[must_use]
     fn add(self, rhs: R) -> Self::Output
     {
         let rhs = rhs.into();
@@ -259,7 +254,6 @@ impl<T: Copy + std::ops::Add<Output = T>, R: Into<Vector2<T>>> std::ops::Add<R>
     type Output = Vector2<T>;
 
     #[inline]
-    #[must_use]
     fn add(self, rhs: R) -> Self::Output
     {
         let rhs = rhs.into();
@@ -272,7 +266,6 @@ impl<T: Copy + std::ops::Sub<Output = T>, R: Into<Self>> std::ops::Sub<R> for Ve
     type Output = Vector2<T>;
 
     #[inline]
-    #[must_use]
     fn sub(self, rhs: R) -> Self::Output
     {
         let rhs = rhs.into();
@@ -286,7 +279,6 @@ impl<T: Copy + std::ops::Sub<Output = T>, R: Into<Vector2<T>>> std::ops::Sub<R>
     type Output = Vector2<T>;
 
     #[inline]
-    #[must_use]
     fn sub(self, rhs: R) -> Self::Output
     {
         let rhs = rhs.into();
@@ -387,7 +379,6 @@ impl<T: Copy + std::ops::Mul<Output = T>> std::ops::Mul<T> for &Vector2<T>
     type Output = Vector2<T>;
 
     #[inline]
-    #[must_use]
     fn mul(self, rhs: T) -> Self::Output
     {
         Vector2::new(self.x * rhs, self.y * rhs)
@@ -399,7 +390,6 @@ impl<T: Copy + std::ops::Mul<Output = T>> std::ops::Mul<T> for Vector2<T>
     type Output = Vector2<T>;
 
     #[inline]
-    #[must_use]
     fn mul(self, rhs: T) -> Self::Output
     {
         Vector2::new(self.x * rhs, self.y * rhs)
@@ -411,7 +401,6 @@ impl<T: Copy + std::ops::Div<Output = T>> std::ops::Div<T> for &Vector2<T>
     type Output = Vector2<T>;
 
     #[inline]
-    #[must_use]
     fn div(self, rhs: T) -> Self::Output
     {
         Vector2::new(self.x / rhs, self.y / rhs)
@@ -423,7 +412,6 @@ impl<T: Copy + std::ops::Div<Output = T>> std::ops::Div<T> for Vector2<T>
     type Output = Vector2<T>;
 
     #[inline]
-    #[must_use]
     fn div(self, rhs: T) -> Self::Output
     {
         Vector2::new(self.x / rhs, self.y / rhs)
@@ -441,7 +429,6 @@ impl<T: RoundFloat> RoundFloat for Vector2<T>
 impl<T> From<Point<T>> for Vector2<T>
 {
     #[inline]
-    #[must_use]
     fn from(point: Point<T>) -> Self
     {
         Vector2::new(point.x, point.y)
