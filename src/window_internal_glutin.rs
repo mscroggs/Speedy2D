@@ -15,11 +15,13 @@
  */
 
 use std::cell::Cell;
+use std::collections::HashMap;
 use std::convert::{TryFrom, TryInto};
 use std::ffi::CString;
 use std::num::NonZeroU32;
 use std::rc::Rc;
 
+use gilrs::{Event, Gilrs};
 use glutin::config::{Config, ConfigTemplateBuilder};
 use glutin::context::{
     ContextApi,
@@ -648,11 +650,71 @@ impl<UserEventType: 'static> WindowGlutin<UserEventType>
 
         let mut handler = Some(handler);
 
+        let mut gilrs = Gilrs::new().unwrap();
+        let mut axis_values = HashMap::new();
+
         let result = event_loop.run(
             move |event: GlutinEvent<UserEventGlutin<UserEventType>>, target| {
                 if handler.is_none() {
                     target.exit();
                 } else {
+                    while let Some(Event { id, event, .. }) = gilrs.next_event() {
+                        let _active_gamepad = Some(id);
+                        match event {
+                            gilrs::EventType::AxisChanged(_, value, ev_code) => {
+                                let code = ev_code.into_u32();
+                                let cv = axis_values.entry(code).or_insert(0);
+                                let nv = if value > 0.5 {
+                                    1
+                                } else if value < -0.5 {
+                                    -1
+                                } else {
+                                    0
+                                };
+                                if nv != *cv {
+                                    if *cv != 0 {
+                                        handler.as_mut().unwrap().on_key_up(
+                                            &mut helper,
+                                            Some(VirtualKeyCode::ControllerAxis(
+                                                code,
+                                                *cv == 1
+                                            )),
+                                            0
+                                        );
+                                    }
+                                    if nv != 0 {
+                                        handler.as_mut().unwrap().on_key_down(
+                                            &mut helper,
+                                            Some(VirtualKeyCode::ControllerAxis(
+                                                code,
+                                                nv == 1
+                                            )),
+                                            0
+                                        );
+                                    }
+                                    *cv = nv;
+                                }
+                            }
+                            gilrs::EventType::ButtonPressed(_, ev_code) => {
+                                let code = ev_code.into_u32();
+                                handler.as_mut().unwrap().on_key_down(
+                                    &mut helper,
+                                    Some(VirtualKeyCode::ControllerButton(code)),
+                                    0
+                                );
+                            }
+                            gilrs::EventType::ButtonReleased(_, ev_code) => {
+                                let code = ev_code.into_u32();
+                                handler.as_mut().unwrap().on_key_up(
+                                    &mut helper,
+                                    Some(VirtualKeyCode::ControllerButton(code)),
+                                    0
+                                );
+                            }
+                            _ => {}
+                        }
+                    }
+
                     let action = WindowGlutin::loop_handle_event(
                         &window,
                         &context,

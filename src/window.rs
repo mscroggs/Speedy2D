@@ -860,6 +860,12 @@ pub enum MouseScrollDistance
 #[non_exhaustive]
 pub enum VirtualKeyCode
 {
+    /// A button on a USB controller
+    ControllerButton(u32),
+    /// An axis button on a USB controller. The bool will be true if the
+    /// direction moved is positive
+    ControllerAxis(u32, bool),
+
     Key1,
     Key2,
     Key3,
